@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.lifecycle.ViewModelProvider
+import com.bumptech.glide.Glide
 
 class BookFragment : Fragment() {
     private lateinit var titleTextView: TextView
@@ -32,6 +33,9 @@ class BookFragment : Fragment() {
         book?.run {
             titleTextView.text = title
             authorTextView.text = author
+            Glide.with(this@BookFragment)
+                .load(coverURI)
+                .into(myImageView)
         }
     }
 
