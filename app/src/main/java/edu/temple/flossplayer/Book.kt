@@ -1,6 +1,6 @@
 package edu.temple.flossplayer
 
-data class Book (val id: Int,
-                 val title: String,
-                 val author: String,
-                 val coverURI: String)
+data class Book (val book_id: Int,
+                 val book_title: String,
+                 val author_name: String,
+                 val cover_uri: String)
