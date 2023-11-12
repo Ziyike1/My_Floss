@@ -1,3 +1,5 @@
+package edu.temple.flossplayer;
+
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -7,9 +9,6 @@ import android.widget.TextView
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import edu.temple.flossplayer.Book
-import edu.temple.flossplayer.BookViewModel
-import edu.temple.flossplayer.R
 
 class BookListFragment : Fragment() {
 
@@ -70,8 +69,8 @@ class BookListFragment : Fragment() {
         }
 
         override fun onBindViewHolder(holder: BookViewHolder, position: Int) {
-            holder.titleTextView.text = bookList[position].title
-            holder.authorTextView.text = bookList[position].author
+            holder.titleTextView.text = bookList[position].book_title
+            holder.authorTextView.text = bookList[position].author_name
         }
 
         override fun getItemCount(): Int {

@@ -31,12 +31,16 @@ class BookFragment : Fragment() {
 
     private fun updateBook(book: Book?) {
         book?.run {
-            titleTextView.text = title
-            authorTextView.text = author
-            Glide.with(this@BookFragment)
-                .load(coverURI)
-                .into(myImageView)
+            titleTextView.text = book_title
+            authorTextView.text = author_name
+
+            if (isAdded) {
+                Glide.with(this@BookFragment)
+                    .load(cover_uri)
+                    .into(myImageView)
+            }
         }
     }
+
 
 }

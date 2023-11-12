@@ -1,8 +1,6 @@
 package edu.temple.flossplayer
 
-import BookListFragment
 import android.app.SearchManager
-import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -11,11 +9,11 @@ import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.widget.ImageButton
-import android.widget.SearchView
 import androidx.activity.OnBackPressedCallback
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.google.gson.Gson
+import com.google.gson.JsonSyntaxException
 import com.google.gson.reflect.TypeToken
 import java.io.BufferedInputStream
 import java.io.BufferedReader
@@ -118,6 +116,7 @@ class MainActivity : AppCompatActivity() {
     private fun performSearch(query: String?) {
         query?.let {
             Thread {
+                Log.d("Search", "Starting network request for query: $query")
                 try {
                     val url = URL("https://kamorris.com/lab/flossplayer/searchbooks.php?query=$query")
                     val urlConnection = url.openConnection() as HttpURLConnection
@@ -133,33 +132,43 @@ class MainActivity : AppCompatActivity() {
                         urlConnection.disconnect()
                     }
                 } catch (e: Exception) {
+                    Log.e("Search", "Error during network request", e)
                     e.printStackTrace()
                 }
+                Log.d("Search", "Network request completed")
             }.start()
         }
     }
 
     private fun handleResult(jsonResult: String) {
+        Log.d("Search", "Handling result: $jsonResult")
         val gson = Gson()
-        val type = object : TypeToken<List<Book>>() {}.type
-        val books: List<Book> = gson.fromJson(jsonResult, type)
-        Handler(Looper.getMainLooper()).post {
-            updateUI(books)
+        try {
+            val type = object : TypeToken<List<Book>>() {}.type
+            val books: List<Book> = gson.fromJson(jsonResult, type)
+            Handler(Looper.getMainLooper()).post {
+                updateUI(books)
+            }
+        } catch (e: JsonSyntaxException) {
+            Log.e("Search", "Error parsing JSON", e)
         }
     }
 
+
     private fun updateUI(books: List<Book>) {
+        Log.d("Search", "Updating UI with books: $books")
         val fragment = supportFragmentManager.findFragmentById(R.id.container1) as? BookListFragment
-        fragment?.updateBooks(books)
+        fragment?.updateBooks(books) ?: Log.e("Search", "BookListFragment not found")
     }
 
 
-    private fun getBookList() : BookList {
-        val bookList = BookList()
+
+//    private fun getBookList() : BookList {
+//        val bookList = BookList()
 //        repeat (10) {
 //            bookList.add(Book("Book ${it + 1}", "Author ${10 - it}"))
 //        }
-
-        return bookList
-    }
+//
+//        return bookList
+//    }
 }
