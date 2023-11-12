@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Floss Player</string>
+    <string name="search_hint" />
 </resources>
