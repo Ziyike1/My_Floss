@@ -10,8 +10,8 @@ class BookViewModel : ViewModel() {
         MutableLiveData()
     }
 
-    private val bookList: MutableLiveData<BookList> by lazy {
-        MutableLiveData()
+    private val bookList: MutableLiveData<List<Book>> by lazy {
+        MutableLiveData<List<Book>>()
     }
 
     // Flag to determine if one-off event should fire
@@ -38,11 +38,11 @@ class BookViewModel : ViewModel() {
         return viewedBook
     }
 
-    fun getBookList(): LiveData<BookList> {
+    fun getBookList(): LiveData<List<Book>> {
         return bookList
     }
 
-    fun setBookList(bookList: BookList) {
-        this.bookList.value = bookList
+    fun setBookList(newBookList: List<Book>) {
+        bookList.value = newBookList
     }
 }

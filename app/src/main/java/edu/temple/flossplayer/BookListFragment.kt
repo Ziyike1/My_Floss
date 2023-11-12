@@ -1,5 +1,3 @@
-package edu.temple.flossplayer
-
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -9,14 +7,17 @@ import android.widget.TextView
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import edu.temple.flossplayer.Book
+import edu.temple.flossplayer.BookViewModel
+import edu.temple.flossplayer.R
 
 class BookListFragment : Fragment() {
 
-    private lateinit var bookViewModel : BookViewModel
+    private lateinit var bookViewModel: BookViewModel
+    private var bookListAdapter: BookListAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         bookViewModel = ViewModelProvider(requireActivity())[BookViewModel::class.java]
     }
 
@@ -31,30 +32,30 @@ class BookListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val onClick: (Book) -> Unit = {
-            // Update the ViewModel
-                book: Book ->
+        val recyclerView = view.findViewById<RecyclerView>(R.id.recyclerView) // 确保您的布局中有一个ID为recyclerView的RecyclerView
+        recyclerView.layoutManager = LinearLayoutManager(requireActivity())
+
+        val onClick: (Book) -> Unit = { book ->
             bookViewModel.setSelectedBook(book)
-            // Inform the activity of the selection so as to not have the event replayed
-            // when the activity is restarted
         }
 
-        with(view as RecyclerView) {
-            layoutManager = LinearLayoutManager(requireActivity())
+        bookListAdapter = BookListAdapter(emptyList(), onClick)
+        recyclerView.adapter = bookListAdapter
 
-            bookViewModel.getBookList().observe(requireActivity()) {
-                adapter = BookListAdapter(it, onClick)
-            }
+        bookViewModel.getBookList().observe(viewLifecycleOwner) { books ->
+            bookListAdapter?.updateBooks(books)
         }
-
     }
 
-    class BookListAdapter (_bookList: BookList, _onClick: (Book) -> Unit) : RecyclerView.Adapter<BookListAdapter.BookViewHolder>() {
-        private val bookList = _bookList
-        private val onClick = _onClick
+    fun updateBooks(newBooks: List<Book>) {
+        bookListAdapter?.updateBooks(newBooks)
+    }
 
-        inner class BookViewHolder (layout : View): RecyclerView.ViewHolder (layout) {
-            val titleTextView : TextView = layout.findViewById(R.id.titleTextView)
+    class BookListAdapter(private var bookList: List<Book>, private val onClick: (Book) -> Unit)
+        : RecyclerView.Adapter<BookListAdapter.BookViewHolder>() {
+
+        inner class BookViewHolder(layout: View) : RecyclerView.ViewHolder(layout) {
+            val titleTextView: TextView = layout.findViewById(R.id.titleTextView)
             val authorTextView: TextView = layout.findViewById(R.id.authorTextView)
 
             init {
@@ -68,16 +69,18 @@ class BookListFragment : Fragment() {
             return BookViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.booklist_items_layout, parent, false))
         }
 
-        // Bind the book to the holder along with the values for the views
         override fun onBindViewHolder(holder: BookViewHolder, position: Int) {
             holder.titleTextView.text = bookList[position].title
             holder.authorTextView.text = bookList[position].author
         }
 
         override fun getItemCount(): Int {
-            return bookList.size()
+            return bookList.size
         }
 
+        fun updateBooks(newBooks: List<Book>) {
+            bookList = newBooks
+            notifyDataSetChanged()
+        }
     }
-
 }
