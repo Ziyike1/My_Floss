@@ -88,9 +88,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun getBookList() : BookList {
         val bookList = BookList()
-        repeat (10) {
-            bookList.add(Book("Book ${it + 1}", "Author ${10 - it}"))
-        }
+//        repeat (10) {
+//            bookList.add(Book("Book ${it + 1}", "Author ${10 - it}"))
+//        }
 
         return bookList
     }
