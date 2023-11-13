@@ -38,11 +38,9 @@ class BookFragment : Fragment() {
         book?.run {
             titleTextView.text = book_title
             authorTextView.text = author_name
-            Log.d("BookFragment", "Cover URI: $cover_uri")
             if (isAdded) {
                 Glide.with(this@BookFragment)
                     .load(cover_uri)
-                    .error(R.drawable.ic_launcher_background)
                     .into(myImageView)
             }
         }
